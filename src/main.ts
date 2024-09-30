@@ -1,5 +1,10 @@
 import $ from "jquery"
 /* declaração de coisas uteis talvez*/
+//TODO Fazer funções pra fazilitar designar tags para os componentes
+function makeH3(id: String, className: String){
+  return $("<h3>").attr({id: `${id}`, class: `${className}`})
+}
+
 /* declaração de componentes */
 function word(word: string){
   return(
@@ -8,10 +13,9 @@ function word(word: string){
 }
 function phonetics(phonetics: Array<number>){
   //Essa merda tá tão remendada que me impressiona funcionar
-  const content = $('<div>').attr('id', 'phonetics')
-  const lengh = phonetics.length - 1
+  let content = $('<div>').attr('id', 'phonetics')
+  let lengh = phonetics.length - 1
   for(var i = 0; i <= lengh; i++){
-    const keys = Object.keys(phonetics[i]) //n lembro pq criei essa variavel, mas vou deixar por precaução
     for(const [key, value] of Object.entries((phonetics[i]))){
       if(key == "license"){      
         const licenseName = $('<p>').attr(`id`, `license_${value.name}`).text(`${value.name}`)       
@@ -33,11 +37,22 @@ function phonetics(phonetics: Array<number>){
 }
 
 function meanings(meanings: Array<number>){
-  const content = $("<div>").attr('id', "meanings")
-  const length = meanings.length - 1
-  for(i = 0; i <= length; i++){
-    /* TODO copiar o for loop de cima, vou ir dormir agora pqp */
+  let content = $("<div>").attr('id', "meanings")
+  let length = meanings.length - 1
+  for(let i = 0; i <= length; i++){
+    for(const [key, value] of Object.entries((meanings[i]))){
+      if(key == "definitions"){
+        value.forEach((e: Object) => {
+          console.log(e)
+        })
+      }else{
+        const innerValue = makeH3("", `${key}`)
+        innerValue.text(`${value}`)
+        content.append(innerValue)
+      }
+    }
   }
+  return content.appendTo(app)
 }
 
 /*---------------------------*/
@@ -48,4 +63,5 @@ $.getJSON('https://api.dictionaryapi.dev/api/v2/entries/en/hello', (res: any) =>
   app.append(JSON.stringify(res[0]))
   word(res[0].word)
   phonetics(res[0].phonetics)
+  meanings(res[0].meanings)
 })
