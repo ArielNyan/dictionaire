@@ -1,9 +1,7 @@
 import $ from "jquery"
 /* declaração de coisas uteis talvez*/
 //TODO Fazer funções pra fazilitar designar tags para os componentes
-function makeH3(id: String, className: String){
-  return $("<h3>").attr({id: `${id}`, class: `${className}`})
-}
+
 
 /* declaração de componentes */
 function word(word: string){
@@ -37,18 +35,84 @@ function phonetics(phonetics: Array<number>){
 }
 
 function meanings(meanings: Array<number>){
-  let content = $("<div>").attr('id', "meanings")
+  let content = $("<div>").attr({
+    id: "meanings",
+    class: "meanings_container"
+  })
   let length = meanings.length - 1
   for(let i = 0; i <= length; i++){
     for(const [key, value] of Object.entries((meanings[i]))){
-      if(key == "definitions"){
+      // if(key == "definitions"){
+      //   value.forEach((e: Object) => {
+      //     console.log(e)
+      //   })
+      // }else{
+      //   const innerValue = makeH3("", `${key}`)
+      //   innerValue.text(`${value}`)
+      //   content.append(innerValue)
+      // }
+      //ESSA MERDA VAI SER UM INFERNO SE EU PRECISAR VOLTAR AQUI
+      switch (key) {
+        case "partOfSpeech":
+          const partSpeech = $("<p>").attr({
+            id: `partSpeech_${i}`,
+            class: "partSpeech"
+          }).text(`${value}`)
+          partSpeech.appendTo(content)
+          break;
+        case "definitions": 
         value.forEach((e: Object) => {
-          console.log(e)
-        })
-      }else{
-        const innerValue = makeH3("", `${key}`)
-        innerValue.text(`${value}`)
-        content.append(innerValue)
+           for(const [k, v] of Object.entries(e)){
+              switch (k) {
+                case "definition":
+                    
+                  const def = $(`<p>`).attr({
+                    id: `def_${i}`,
+                    class:"definition"
+                  }).text(`${v}`)
+                  def.appendTo(content)
+                break;
+                case "synonyms":
+                  const syn = $("<p>").attr({
+                    id: `syn_${i}`,
+                    class: "synonyms"
+                  }).text(`${v}`)
+                  syn.appendTo(content)
+                break;
+                case "antonyms":
+                  const antonyms = $("<p>").attr({
+                    id: `anto_${i}`,
+                    class: "antonyms"
+                  }).text(`${v}`)
+                  antonyms.appendTo(content)
+                break;
+                case "example":
+                  const ex = $("<p>").attr({
+                    id: `ex_${i}`,
+                    class: `example`
+                  }).text(`${v}`)
+                  ex.appendTo(content)
+                break;
+              }
+            }
+          })
+          break;
+          case "synonyms":
+            const syn = $("<p>").attr({
+              id: `synonyms_${i}`,
+              class: "synonyms"
+            }).text(`${value}`)
+            syn.appendTo(content)
+          break;
+          case "antonyms":
+
+            const antonyms = $("<p>").attr({
+              id: `anto_${i}`,
+              class: "antonyms"
+            }).text(`${value}`)
+            antonyms.appendTo(content)
+          break;
+
       }
     }
   }
@@ -60,8 +124,12 @@ const app = $('#app')
 
 
 $.getJSON('https://api.dictionaryapi.dev/api/v2/entries/en/hello', (res: any) => {
-  app.append(JSON.stringify(res[0]))
+  //app.append(JSON.stringify(res[0].meanings))
   word(res[0].word)
   phonetics(res[0].phonetics)
   meanings(res[0].meanings)
 })
+
+/* Estilização */
+//TODO Estilizar essa porra toda
+//boa sorte
